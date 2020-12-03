@@ -1,0 +1,80 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+    <script>
+        function performSubmit(event) {
+            const title = document.getElementById("title").value;
+            let descriptions = document.getElementById("todo").description ||[];
+
+            if( descriptions.nodeName === 'INPUT') {
+                descriptions = [descriptions]
+            }
+            let items = []
+            descriptions.forEach((description) => {
+                items.push( \{ description: description.value\})
+            })
+
+            console.log("Title", title);
+            const todo = \{title: title\}
+            todo.items = items
+            const param = \{
+                method: 'PUT',
+                headers: \{
+                    'Content-Type': 'application/json'
+                \},
+                body: JSON.stringify(todo)
+            }
+
+            fetch(window.location, param).then(response => {
+                console.log("response", response)
+                window.location= "/"
+                })
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            return false;
+        }
+
+        function addItem() {
+            let container = document.getElementById("item")
+            let li = document.createElement("LI")
+            let input = document.createElement("input")
+            input.setAttribute("name", "description")
+            input.setAttribute("type", "text")
+            li.appendChild(input)
+            container.appendChild(li)
+        }
+    </script>
+</head>
+<body style="\{display: 'flex'\}">
+<h1>Todo</h1>
+<form id="todo" method="POST" onsubmit="return performSubmit(event)">
+    <div>
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" value="{todo.title}"/>
+    </div>
+    <div id="items">
+        <ol id="item">
+            {#for item in todo.items}
+            <li><input type="text" name="description" value="{item.description}"</li>
+            {/for}
+        </ol>
+    </div>
+    <div>
+        <button type="button" onclick="addItem()">Add Item</button>
+    </div>
+    <div>
+    <input type="submit"/>
+    </div>
+</form>
+
+</body>
+</html>
